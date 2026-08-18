@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="AskOli — An AI-Based Information Assistant for Olivarez College. Get instant answers about school procedures, documents, facilities, services, and policies.">
+  <title>AskOli — AI Information Assistant | Olivarez College</title>
+  <link rel="icon" href="assets/olivarez_logo.png" type="image/png">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/chat.css">
+</head>
+
+<body>
+
+  <!-- ═══ Particle Background Canvas ═══ -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- ═══ Chat Application ═══ -->
+  <div class="chat-app">
+
+    <!-- ═══ Header ═══ -->
+    <header class="chat-header" id="chat-header">
+      <div class="header-left">
+        <!-- Sidebar Toggle -->
+        <button class="header-icon-btn" id="sidebar-toggle-btn" title="Toggle Chat History">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <line x1="9" y1="3" x2="9" y2="21" />
+          </svg>
+        </button>
+
+        <div class="header-logo">
+          <img src="assets/olivarez_logo.png" alt="Olivarez College Logo" class="school-logo-img">
+          <div class="logo-text">ASK<span class="logo-highlight">OLI</span></div>
+        </div>
+
+        <div class="header-status">
+          <span class="status-dot"></span>
+          <span class="status-text">AI Assistant Online</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Quick Voice / Mute Toggle -->
+        <button class="header-icon-btn" id="voice-quick-toggle" title="Toggle Voice / Read Aloud">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path id="voice-icon-waves" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+
+        <!-- New Chat -->
+        <button class="header-btn" id="new-chat-btn" title="Start a new conversation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <span>New Chat</span>
+        </button>
+
+        <a href="admin.html" class="header-btn admin-link" title="Admin Dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+          <span>Admin</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- ═══ App Body with Sidebar & Chat ═══ -->
+    <div class="chat-layout">
+
+      <!-- ═══ Collapsible History Sidebar ═══ -->
+      <aside class="chat-sidebar" id="chat-sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="16" height="16">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span>Chat History</span>
+          </div>
+          <button class="sidebar-mini-btn" id="sidebar-new-btn" title="Start New Conversation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="16" height="16">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Search History -->
+        <div class="history-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" width="14" height="14">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" id="history-search-input" placeholder="Search past messages..." autocomplete="off">
+        </div>
+
+        <!-- Sessions List -->
+        <div class="history-list" id="history-list">
+          <!-- Dynamically injected by JS -->
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+          <span class="session-count-label" id="session-count-label">0 conversations</span>
+          <button class="clear-history-btn" id="clear-history-btn" title="Clear all saved conversations">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="13" height="13">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6l-2 14H7L5 6" />
+            </svg>
+            <span>Clear All</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Sidebar Overlay for mobile -->
+      <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+      <!-- ═══ Main Chat Area ═══ -->
+      <main class="chat-main">
+
+        <!-- ═══ Welcome Screen ═══ -->
+        <div class="welcome-screen" id="welcome-screen">
+          <!-- AI Orb -->
+          <div class="welcome-orb-container">
+            <div class="orb-ring"></div>
+            <div class="orb-ring"></div>
+            <div class="orb-ring"></div>
+            <div class="welcome-orb"></div>
+          </div>
+
+          <h1 class="welcome-heading">Hello, I'm AskOli.</h1>
+          <p class="welcome-subheading">Your AI-Based Information Assistant for Olivarez College.</p>
+          <p class="welcome-description">Ask me about Olivarez College procedures, documents, facilities, services,
+            policies, and other school-related information.</p>
+
+          <!-- Suggestion Cards -->
+
+          <div class="suggestions-grid">
+            <div class="suggestion-card" data-question="How do I request a Transcript of Records?">
+              <div class="suggestion-icon"></div>
+              <div class="suggestion-label"></div>
+              <div class="suggestion-text"></div>
+            </div>
+            <div class="suggestion-card" data-question="What are the enrollment requirements for new students?">
+              <div class="suggestion-icon"></div>
+              <div class="suggestion-label"></div>
+              <div class="suggestion-text"></div>
+            </div>
+            <div class="suggestion-card" data-question="Where is the Registrar's Office located?">
+              <div class="suggestion-icon"></div>
+              <div class="suggestion-label"></div>
+              <div class="suggestion-text"></div>
+            </div>
+            <div class="suggestion-card" data-question="What programs does Olivarez College offer?">
+              <div class="suggestion-icon"></div>
+              <div class="suggestion-label"></div>
+              <div class="suggestion-text"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ Conversation Area ═══ -->
+        <div class="chat-conversation" id="chat-conversation">
+          <div class="chat-spacer"></div>
+          <div id="chat-messages"></div>
+
+          <!-- Typing Indicator -->
+          <div class="typing-indicator" id="typing-indicator">
+            <div class="message-avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z" />
+                <path d="M16 14H8a4 4 0 0 0-4 4v2h16v-2a4 4 0 0 0-4-4z" />
+                <circle cx="12" cy="6" r="1.5" fill="currentColor" />
+              </svg>
+            </div>
+            <div class="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <span class="typing-label">AskOli is thinking...</span>
+          </div>
+        </div>
+
+        <!-- ═══ Chat Input Bar ═══ -->
+        <div class="chat-input-bar">
+          <div class="chat-input-container">
+            <textarea id="chat-input" class="chat-input" rows="1" placeholder="Ask AskOli about Olivarez College..."
+              autocomplete="off"></textarea>
+            <button id="send-btn" class="send-btn" title="Send message">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+          </div>
+          <p class="chat-disclaimer">AskOli provides verified answers from its Olivarez College knowledge base. For
+            official credentials, visit the Registrar's Office.</p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+
+  <!-- ═══ Toast Notification ═══ -->
+  <div class="toast" id="chat-toast"></div>
+
+  <!-- ═══ Scripts ═══ -->
+  <script src="js/knowledgeBase.js"></script>
+  <script src="js/chatHistory.js"></script>
+  <script src="js/aiApi.js"></script>
+  <script src="js/chatEngine.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/chat.js"></script>
+</body>
+
+</html>
